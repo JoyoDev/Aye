@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class UrlValidator {
+public class URLValidator {
 
     public static boolean validateUrl(String url) {
         try {

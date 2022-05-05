@@ -1,5 +1,6 @@
 package com.joyodev.aye.activescanner;
 
+import com.joyodev.aye.utils.UrlValidator;
 import lombok.Getter;
 
 import java.net.http.HttpClient;
@@ -12,6 +13,9 @@ public class ActiveScannerClient implements Client {
     private HttpClient httpClient;
 
     public ActiveScannerClient(String engineUrl) {
+        if(!UrlValidator.validateUrl(engineUrl)) {
+            throw new IllegalArgumentException("Anchore Engine URL is not valid: " + engineUrl);
+        }
         this.engineUrl = engineUrl;
         this.httpClient = HttpClient.newBuilder().build();
     }
@@ -19,10 +23,5 @@ public class ActiveScannerClient implements Client {
     @Override
     public boolean checkEngineHealth() {
         return false;
-    }
-
-    @Override
-    public String engineUrl() {
-        return null;
     }
 }

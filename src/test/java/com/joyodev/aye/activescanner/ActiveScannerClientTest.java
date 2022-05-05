@@ -7,12 +7,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class ActiveScannerClientTest {
 
     @Test
-    void testClientSuccessfullyCreated() {
+    void canCreateClientWithValidURL() {
         assertDoesNotThrow(() -> new ActiveScannerClient("https://localhost:8228/v1"));
     }
 
     @Test
-    void testClientNotCreated() {
+    void cannotCreateClientWithInvalidURL() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             new ActiveScannerClient("some.bad.url/v1");
         });

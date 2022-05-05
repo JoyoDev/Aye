@@ -42,13 +42,13 @@ public class ActiveScannerClientTest {
         // given
         ActiveScannerClient activeScannerClient = new ActiveScannerClient(mockWebServer.url("/").toString());
 
-        //when
+        // when
         mockWebServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json; charset=utf-8")
                 .setResponseCode(500));
         boolean isHealthy = activeScannerClient.checkEngineHealth();
 
-        //then
+        // then
         assertEquals(isHealthy, false);
     }
 
@@ -57,13 +57,13 @@ public class ActiveScannerClientTest {
         // given
         ActiveScannerClient activeScannerClient = new ActiveScannerClient(mockWebServer.url("/").toString());
 
-        //when
+        // when
         mockWebServer.enqueue(new MockResponse()
                 .addHeader("Content-Type", "application/json; charset=utf-8")
                 .setResponseCode(200));
         boolean isHealthy = activeScannerClient.checkEngineHealth();
 
-        //then
+        // then
         assertEquals(isHealthy, true);
     }
 

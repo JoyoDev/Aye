@@ -76,7 +76,6 @@ public final class K8sClient {
             log.info(String.format("StatefulSets in default namespace: %s", String.valueOf(statefulSetList.toString())));
             return true;
         } catch (ApiException e) {
-            e.printStackTrace();
             log.error("Could not list StatefulSets", e);
             return false;
         }
@@ -102,7 +101,6 @@ public final class K8sClient {
             }
 
         } catch (ApiException e) {
-            e.printStackTrace();
             log.error("Could not list Pods", e);
         }
 

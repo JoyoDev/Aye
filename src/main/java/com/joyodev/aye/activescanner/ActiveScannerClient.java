@@ -2,6 +2,7 @@ package com.joyodev.aye.activescanner;
 
 import com.joyodev.aye.util.URLValidator;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * Anchore Client that checks if Anchore Engine can be reached
  */
+@Slf4j
 public class ActiveScannerClient implements Client {
 
     @Getter
@@ -41,13 +43,13 @@ public class ActiveScannerClient implements Client {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return response.statusCode() == 200;
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return false;
         }
     }

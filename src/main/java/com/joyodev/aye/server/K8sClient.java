@@ -1,7 +1,6 @@
 package com.joyodev.aye.server;
 
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.util.Config;
 
 import java.io.IOException;

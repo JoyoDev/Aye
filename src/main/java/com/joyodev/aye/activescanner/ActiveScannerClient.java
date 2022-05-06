@@ -43,13 +43,13 @@ public class ActiveScannerClient implements Client {
             HttpResponse<String> response = this.httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return response.statusCode() == 200;
         } catch (URISyntaxException e) {
-            log.error(e.getMessage());
+            log.error("URI Syntax Error", e);
             return false;
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("IO Error", e);
             return false;
         } catch (InterruptedException e) {
-            log.error(e.getMessage());
+            log.error("Interrupted", e);
             return false;
         }
     }

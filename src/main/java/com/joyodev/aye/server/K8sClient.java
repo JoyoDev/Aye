@@ -1,6 +1,7 @@
 package com.joyodev.aye.server;
 
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.util.Config;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.io.IOException;
 public final class K8sClient {
 
     public static K8sClient INSTANCE;
-    //private ApiClient clientSet = Config.defaultClient();
+    //private ApiClient apiClient = Config.defaultClient();
 
     public K8sClient() throws IOException {
     }

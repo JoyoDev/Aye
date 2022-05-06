@@ -39,11 +39,4 @@ public class Server {
         throw new ServerNotHealthyException();
     }
 
-    @GetMapping("/test")
-    public String test() {
-        CLIRunner cliRunner = new CLIRunner();
-        String out = cliRunner.exec("anchore-cli", "help");
-        return out;
-    }
-
 }

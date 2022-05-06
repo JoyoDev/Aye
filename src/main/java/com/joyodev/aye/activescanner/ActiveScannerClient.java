@@ -1,6 +1,6 @@
 package com.joyodev.aye.activescanner;
 
-import com.joyodev.aye.utils.URLValidator;
+import com.joyodev.aye.util.URLValidator;
 import lombok.Getter;
 
 import java.io.IOException;

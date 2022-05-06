@@ -2,6 +2,7 @@ package com.joyodev.aye.server;
 
 import com.joyodev.aye.activescanner.ActiveScannerClient;
 import com.joyodev.aye.activescanner.Client;
+import com.joyodev.aye.exception.ServerNotHealthyException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,11 @@ public class Server {
 
     @GetMapping("/healthz")
     public String health() {
-        return "healthy!";
+        if(activeScannerClient.checkEngineHealth() && k8sClient.k8sCanListNamespaces() &&
+                k8sClient.k8sCanListDeployments() && k8sClient.k8sCanListDaemonSets() && k8sClient.k8sCanListStatefulSets()) {
+            return "Healthy!";
+        }
+        throw new ServerNotHealthyException();
     }
 
 }

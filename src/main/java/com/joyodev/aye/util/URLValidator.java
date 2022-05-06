@@ -1,4 +1,4 @@
-package com.joyodev.aye.utils;
+package com.joyodev.aye.util;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;

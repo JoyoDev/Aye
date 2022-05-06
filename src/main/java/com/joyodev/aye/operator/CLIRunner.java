@@ -17,6 +17,7 @@ public class CLIRunner {
         try {
             Process process = processBuilder.start();
             String output = new String(process.getInputStream().readAllBytes());
+            process.destroy();
             return output;
         } catch (IOException e) {
             log.error("Error running command {}", command, e);

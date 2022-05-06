@@ -7,10 +7,10 @@ import java.io.IOException;
 
 public final class K8sClient {
 
-    public static K8sClient INSTANCE;
+    private static K8sClient INSTANCE;
     //private ApiClient apiClient = Config.defaultClient();
 
-    public K8sClient() throws IOException {
+    private K8sClient() throws IOException {
     }
 
     public static K8sClient getInstance() throws IOException {

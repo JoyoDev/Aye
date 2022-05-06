@@ -24,7 +24,7 @@ public class ActiveScannerClient implements Client {
 
     public ActiveScannerClient(String engineUrl) {
         if(!URLValidator.validateUrl(engineUrl)) {
-            throw new IllegalArgumentException("Provided Anchore Engine URL is not valid: " + engineUrl);
+            throw new IllegalArgumentException(String.format("Provided Anchore Engine URL is not valid: %s", engineUrl));
         }
         this.engineUrl = engineUrl;
         this.httpClient = HttpClient.newBuilder().build();

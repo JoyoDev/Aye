@@ -23,7 +23,7 @@ public class ActiveScannerClientTest {
 
     @Test
     public void canCreateClientWithValidURL() {
-        assertDoesNotThrow(() -> new ActiveScannerClient("https://localhost:8228/v1"));
+        assertDoesNotThrow(() -> new ActiveScannerClient("https://localhost:8228/v1/"));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class ActiveScannerClientTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             new ActiveScannerClient("some.bad.url/v1");
         });
-        String expectedMessage = "Provided Anchore Engine URL is not valid: some.bad.url/v1";
+        String expectedMessage = "Provided Anchore Engine URL is not valid: some.bad.url/v1/";
         String actualMessage = exception.getMessage();
 
         assertTrue(actualMessage.contains(expectedMessage));

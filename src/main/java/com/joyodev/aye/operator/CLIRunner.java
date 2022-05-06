@@ -18,6 +18,9 @@ public class CLIRunner {
         try {
             Process process = processBuilder.start();
             String output = IOUtils.toString(process.getInputStream(), "UTF-8");
+            process.getInputStream().close();
+            process.getOutputStream().close();
+            process.getErrorStream().close();
             return output;
         } catch (IOException e) {
             log.error("Error running command {}", command, e);

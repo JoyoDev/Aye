@@ -1,6 +1,5 @@
 package com.joyodev.aye.operator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
@@ -17,10 +16,7 @@ public class CLIRunner {
         processBuilder.command(command);
         try {
             Process process = processBuilder.start();
-            String output = IOUtils.toString(process.getInputStream(), "UTF-8");
-            process.getInputStream().close();
-            process.getOutputStream().close();
-            process.getErrorStream().close();
+            String output = new String(process.getInputStream().readAllBytes());
             return output;
         } catch (IOException e) {
             log.error("Error running command {}", command, e);

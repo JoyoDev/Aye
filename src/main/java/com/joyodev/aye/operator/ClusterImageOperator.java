@@ -35,7 +35,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean addImage(String image) {
-        String output = cliRunner.exec("anchore-clig", "image", "add", image);
+        String output = cliRunner.exec("anchore-cli", "image", "add", image);
         if (output == null) {
             log.error("Anchore CLI failed to add image {} to the Anchore", image);
             return false;
@@ -164,7 +164,7 @@ public class ClusterImageOperator implements Operator {
     @Override
     public boolean checkIfErrorOccurred(String output) {
         if(output.contains("error_codes") || output.contains("Error")) {
-            log.warn("Anchore returned error. {}", output);
+            log.warn("{}", output);
             return true;
         }
         return false;

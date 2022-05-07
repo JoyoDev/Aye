@@ -21,17 +21,17 @@ public class Server {
 
     private K8sClient k8sClient;
 
-    private Client activeScannerClient;
+    private Client client;
 
     @PostConstruct
     public void initialize() throws IOException {
-        activeScannerClient = new ActiveScannerClient(anchoreEngineUrl);
+        client = new ActiveScannerClient(anchoreEngineUrl);
         k8sClient = K8sClient.getInstance();
     }
 
     @GetMapping("/healthz")
     public String health() {
-        if(activeScannerClient.checkEngineHealth() && k8sClient.k8sCanListNamespaces() &&
+        if(client.checkEngineHealth() && k8sClient.k8sCanListNamespaces() &&
                 k8sClient.k8sCanListDeployments() && k8sClient.k8sCanListDaemonSets() && k8sClient.k8sCanListStatefulSets()) {
             return "Healthy!";
         }

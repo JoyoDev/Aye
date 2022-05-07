@@ -1,7 +1,6 @@
 package com.joyodev.aye.operator;
 
 import com.joyodev.aye.util.TimeCalculator;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
@@ -36,7 +35,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean addImage(String image) {
-        String output = this.cliRunner.exec("anchore-cli", "image", "add", image);
+        String output = cliRunner.exec("anchore-cli", "image", "add", image);
         if (output == null) {
             log.error("Failed to add image {} to the Anchore", image);
             return false;
@@ -52,15 +51,15 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean AddFailedAnalysisImage(String image) {
-        log.debug("ime of last analysis for image {} is {}", image, this.failedAnalysisTime.get(image));
-        if (TimeCalculator.calculateTimeSince(this.failedAnalysisTime.get(image)) > 15) {
+        log.debug("ime of last analysis for image {} is {}", image, failedAnalysisTime.get(image));
+        if (TimeCalculator.calculateTimeSince(failedAnalysisTime.get(image)) > 15) {
             log.debug("Adding image {} that previously failed analysis", image);
             boolean added = addImage(image);
             if (!added) {
                 log.error("Failed to add image {} to the Anchore", image);
                 return false;
             }
-            this.failedAnalysisTime.replace(image, LocalTime.now());
+            failedAnalysisTime.replace(image, LocalTime.now());
             return true;
         }
         log.debug("Waiting until 15 minutes have passed since last attempt of analysis for image {}", image);
@@ -69,7 +68,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public String checkImageStatus(String image) {
-        String output = this.cliRunner.exec("anchore-cli", "image", "get", image);
+        String output = cliRunner.exec("anchore-cli", "image", "get", image);
         if (output == null) {
             log.error("Failed to get status for image {}", image);
             return null;
@@ -85,7 +84,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public String checkImageEvaluationStatus(String image) {
-        String output = this.cliRunner.exec("anchore-cli", "evaluate", "check", image);
+        String output = cliRunner.exec("anchore-cli", "evaluate", "check", image);
         if (output == null) {
             log.error("Failed to get evaluation status for image {}", image);
             return null;
@@ -99,7 +98,10 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public void operate() {
-
+        log.info("Scanning started...");
+        for(String image : currentImages) {
+            System.out.println(image);
+        }
     }
 
     @Override

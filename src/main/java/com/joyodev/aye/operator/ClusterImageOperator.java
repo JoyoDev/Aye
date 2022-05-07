@@ -35,9 +35,9 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean addImage(String image) {
-        String output = cliRunner.exec("anchore-cli", "image", "add", image);
+        String output = cliRunner.exec("anchore-clig", "image", "add", image);
         if (output == null) {
-            log.error("Failed to add image {} to the Anchore", image);
+            log.error("Anchore CLI failed to add image {} to the Anchore", image);
             return false;
         }
         if(checkUnauthorized(output))
@@ -50,13 +50,13 @@ public class ClusterImageOperator implements Operator {
     }
 
     @Override
-    public boolean AddFailedAnalysisImage(String image) {
+    public boolean addFailedAnalysisImage(String image) {
         log.debug("ime of last analysis for image {} is {}", image, failedAnalysisTime.get(image));
         if (TimeCalculator.calculateTimeSince(failedAnalysisTime.get(image)) > 15) {
             log.debug("Adding image {} that previously failed analysis", image);
             boolean added = addImage(image);
             if (!added) {
-                log.error("Failed to add image {} to the Anchore", image);
+                log.error("Anchore CLI failed to add image {} to the Anchore", image);
                 return false;
             }
             failedAnalysisTime.replace(image, LocalTime.now());
@@ -70,7 +70,7 @@ public class ClusterImageOperator implements Operator {
     public String checkImageStatus(String image) {
         String output = cliRunner.exec("anchore-cli", "image", "get", image);
         if (output == null) {
-            log.error("Failed to get status for image {}", image);
+            log.error("Anchore CLI failed to get status for image {}", image);
             return null;
         }
         if(checkUnauthorized(output))
@@ -86,10 +86,13 @@ public class ClusterImageOperator implements Operator {
     public String checkImageEvaluationStatus(String image) {
         String output = cliRunner.exec("anchore-cli", "evaluate", "check", image);
         if (output == null) {
-            log.error("Failed to get evaluation status for image {}", image);
+            log.error("Anchore CLI failed to get evaluation status for image {}", image);
             return null;
         }
         if(checkUnauthorized(output))
+            return null;
+
+        if (checkIfErrorOccurred(output))
             return null;
 
         log.debug("Got evaluation status for image {}", image);
@@ -100,8 +103,38 @@ public class ClusterImageOperator implements Operator {
     public void operate() {
         log.info("Scanning started...");
         for(String image : currentImages) {
-            System.out.println(image);
+            String status = checkImageStatus(image);
+            String evalStatus = checkImageEvaluationStatus(image);
+
+            if(!checkIfAnalyzed(status) && !checkIfAnalyzing(status) || !checkIfPassed(evalStatus)) {
+                if (checkIfFailedAnalysis(image)) {
+                    if(!failedAnalysisTime.containsKey(image)) {
+                        log.debug("Added image to failed analysis");
+                        failedAnalysisTime.put(image, LocalTime.now());
+                    } else {
+                        boolean successAdding = addFailedAnalysisImage(image);
+                        if(!successAdding)
+                            log.error("Error adding image {}", image);
+                    }
+                }
+                else if(checkIfFailed(evalStatus)) {
+                    log.warn("Image {} failed scanning", image);
+                }
+                else {
+                    if(checkIfAnalyzing(status))
+                        log.debug("Image {} is being analyzed at the moment", image);
+                    else {
+                        boolean successAdding = addImage(image);
+                        if(!successAdding)
+                            log.error("Error adding image {}", image);
+                    }
+                }
+            }
+            else {
+                log.debug("Image {} is already analyzed and passed", image);
+            }
         }
+        log.info("Analysis loop completed...");
     }
 
     @Override
@@ -130,8 +163,8 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean checkIfErrorOccurred(String output) {
-        if(output.contains("error_codes")) {
-            log.warn("Anchore returned error.");
+        if(output.contains("error_codes") || output.contains("Error")) {
+            log.warn("Anchore returned error. {}", output);
             return true;
         }
         return false;
@@ -139,22 +172,27 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean checkIfAnalyzed(String output) {
-        return output.contains("analyzed");
+        return output != null && output.contains("analyzed");
     }
 
     @Override
     public boolean checkIfPassed(String output) {
-        return output.contains("pass");
+        return output != null && output.contains("pass");
     }
 
     @Override
     public boolean checkIfAnalyzing(String output) {
-        return output.contains("analyzing");
+        return output != null && output.contains("analyzing");
     }
 
     @Override
     public boolean checkIfFailedAnalysis(String output) {
-        return output.contains("analysis_failed");
+        return output != null && output.contains("analysis_failed");
+    }
+
+    @Override
+    public boolean checkIfFailed(String output) {
+        return output != null && output.contains("fail");
     }
 
 

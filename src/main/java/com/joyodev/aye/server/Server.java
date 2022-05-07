@@ -3,7 +3,6 @@ package com.joyodev.aye.server;
 import com.joyodev.aye.activescanner.ActiveScannerClient;
 import com.joyodev.aye.activescanner.Client;
 import com.joyodev.aye.exception.ServerNotHealthyException;
-import com.joyodev.aye.operator.ClusterImageOperator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

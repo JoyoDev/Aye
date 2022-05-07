@@ -20,7 +20,7 @@ public interface Operator {
      * Adds image to Anchore that previously failed analysis
      * @param image Passed image
      */
-    boolean AddFailedAnalysisImage(String image);
+    boolean addFailedAnalysisImage(String image);
 
     /**
      * Gets status for specific image from Anchore
@@ -98,4 +98,11 @@ public interface Operator {
      * @return rue if output contains analysis_failed, else false
      */
     boolean checkIfFailedAnalysis(String output);
+
+    /**
+     * Checks if image failed scanning process
+     * @param output
+     * @return true if fail is in the output, else false
+     */
+    boolean checkIfFailed(String output);
 }

@@ -14,13 +14,13 @@ public interface Operator {
      * Adds image to the Anchore
      * @param image Passed image
      */
-    void addImage(String image);
+    boolean addImage(String image);
 
     /**
      * Adds image to Anchore that previously failed analysis
      * @param image Passed image
      */
-    void AddFailedAnalysisImage(String image);
+    boolean AddFailedAnalysisImage(String image);
 
     /**
      * Gets status for specific image from Anchore
@@ -57,4 +57,45 @@ public interface Operator {
      * Calls deleteScanMetric for each old image
      */
     void clearOldMetrics();
+
+    /**
+     * Checks if application is authorized to communicate with Anchore Engine
+     * @return true if unauthorized, else false
+     */
+    boolean checkUnauthorized(String output);
+
+    /**
+     * Checks if Anchore Engine returned errors such as 400 or 404
+     * @param output
+     * @return true if error_codes exists in output, else false
+     */
+    boolean checkIfErrorOccurred(String output);
+
+    /**
+     * Checks if image is analyzed by Anchore Engine
+     * @param output
+     * @return true if analyzed, else false
+     */
+    boolean checkIfAnalyzed(String output);
+
+    /**
+     * Checks if image passed scanning process
+     * @param output
+     * @return true if pass is in the output, else false
+     */
+    boolean checkIfPassed(String output);
+
+    /**
+     * Checks if image is being analyzed
+     * @param output
+     * @return true if output contains analyzing, else false
+     */
+    boolean checkIfAnalyzing(String output);
+
+    /**
+     * Checks whether image failed analysis
+     * @param output
+     * @return rue if output contains analysis_failed, else false
+     */
+    boolean checkIfFailedAnalysis(String output);
 }

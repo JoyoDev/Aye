@@ -3,7 +3,7 @@ package com.joyodev.aye.operator;
 import com.joyodev.aye.util.TimeCalculator;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +16,7 @@ public class ClusterImageOperator implements Operator {
 
     private List<String> previousImages;
 
-    private Map<String, LocalTime> failedAnalysisTime;
+    private Map<String, LocalDateTime> failedAnalysisTime;
 
     private CLIRunner cliRunner;
 
@@ -59,7 +59,7 @@ public class ClusterImageOperator implements Operator {
                 log.error("Anchore CLI failed to add image {} to the Anchore", image);
                 return false;
             }
-            failedAnalysisTime.replace(image, LocalTime.now());
+            failedAnalysisTime.replace(image, LocalDateTime.now());
             return true;
         }
         log.debug("Waiting until 15 minutes have passed since last attempt of analysis for image {}", image);
@@ -110,7 +110,7 @@ public class ClusterImageOperator implements Operator {
                 if (checkIfFailedAnalysis(image)) {
                     if(!failedAnalysisTime.containsKey(image)) {
                         log.debug("Added image to failed analysis");
-                        failedAnalysisTime.put(image, LocalTime.now());
+                        failedAnalysisTime.put(image, LocalDateTime.now());
                     } else {
                         boolean successAdding = addFailedAnalysisImage(image);
                         if(!successAdding)

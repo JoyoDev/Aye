@@ -236,9 +236,23 @@ public class ClusterImageOperatorTest {
     }
 
     @Test
-    public void testCheckIfErrorOccurredWhenHas() {
+    public void testCheckIfErrorOccurredWhenHasWithError() {
         // given
         String output = "Error: image data not found in DB\n" +
+                "HTTP Code: 404\n" +
+                "Detail: {}\n";
+
+        // when
+        boolean errorOccurred = operator.checkIfErrorOccurred(output);
+
+        // then
+        assertTrue(errorOccurred);
+    }
+
+    @Test
+    public void testCheckIfErrorOccurredWhenHasWithErrorCodes() {
+        // given
+        String output = "Image data not found in DB\n" +
                 "HTTP Code: 404\n" +
                 "Detail: {'error_codes': []}\n";
 

@@ -5,19 +5,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @SpringBootTest
 public class UtilTest {
 
     @Test
     public void urlIsNotValid() {
-        assertEquals(URLValidator.validateUrl("some.bad.url/v1"), false);
+        assertFalse(URLValidator.validateUrl("some.bad.url/v1"));
     }
 
     @Test
     public void urlIsValid() {
-        assertEquals(URLValidator.validateUrl("https://localhost:8228/v1"), true);
+        assertTrue(URLValidator.validateUrl("https://localhost:8228/v1"));
     }
 
     @Test void timeCalculatorReturnsCorrectValueWhenMoreMinutesPassed() {

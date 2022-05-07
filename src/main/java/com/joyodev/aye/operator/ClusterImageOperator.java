@@ -107,7 +107,7 @@ public class ClusterImageOperator implements Operator {
             String evalStatus = checkImageEvaluationStatus(image);
 
             if(!checkIfAnalyzed(status) && !checkIfAnalyzing(status) || !checkIfPassed(evalStatus)) {
-                if (checkIfFailedAnalysis(image)) {
+                if (checkIfFailedAnalysis(status)) {
                     if(!failedAnalysisTime.containsKey(image)) {
                         log.debug("Added image to failed analysis");
                         failedAnalysisTime.put(image, LocalDateTime.now());
@@ -172,7 +172,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public boolean checkIfAnalyzed(String output) {
-        return output != null && output.contains("analyzed");
+        return output != null && output.contains("analyzed") && !output.contains("not_analyzed");
     }
 
     @Override

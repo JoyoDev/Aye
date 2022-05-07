@@ -234,4 +234,34 @@ public class ClusterImageOperatorTest {
         // then
         assertFalse(failed);
     }
+
+    @Test
+    public void testCheckIfErrorOccurredWhenHas() {
+        // given
+        String output = "Error: image data not found in DB\n" +
+                "HTTP Code: 404\n" +
+                "Detail: {'error_codes': []}\n";
+
+        // when
+        boolean errorOccurred = operator.checkIfErrorOccurred(output);
+
+        // then
+        assertTrue(errorOccurred);
+    }
+
+    @Test
+    public void testCheckIfErrorOccurredWhenHasNot() {
+        // given
+        String output = "Image Digest: sha256:66eb309b462dc9cf9a78d016362057250ffba2020ce34a72cf9b3f33fb54e515\n" +
+                "Full Tag: docker.io/library/httpd:latest\n" +
+                "Status: pass\n" +
+                "Last Eval: 2022-05-07T19:13:04Z\n" +
+                "Policy ID: 2c53a13c-1765-11e8-82ef-23527761d060\n";
+
+        // when
+        boolean errorOccurred = operator.checkIfErrorOccurred(output);
+
+        // then
+        assertFalse(errorOccurred);
+    }
 }

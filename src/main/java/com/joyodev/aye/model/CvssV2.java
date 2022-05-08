@@ -1,8 +1,11 @@
 package com.joyodev.aye.model;
 
-public class CvssV2{
+public class CvssV2 {
+
 	private double baseScore;
+
 	private double impactScore;
+
 	private double exploitabilityScore;
 
 	public double getBaseScore(){

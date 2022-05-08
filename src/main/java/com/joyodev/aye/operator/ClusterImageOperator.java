@@ -1,6 +1,9 @@
 package com.joyodev.aye.operator;
 
+import com.joyodev.aye.model.ImageVulnerability;
+import com.joyodev.aye.model.ImageVulnerabilityMetric;
 import com.joyodev.aye.model.ScanResponse;
+import com.joyodev.aye.model.generator.ImageScanMetricsGenerator;
 import com.joyodev.aye.model.parser.ImageScanParser;
 import com.joyodev.aye.util.TimeCalculator;
 import lombok.extern.slf4j.Slf4j;
@@ -173,8 +176,17 @@ public class ClusterImageOperator implements Operator {
         if(scanResponse == null) {
             log.error("Could not get scan results for image {} to expose", image);
         }
-        log.debug("Exposing scan results for image {}", image);
-        System.out.println(scanResponse);
+        else {
+            log.debug("Exposing scan results for image {}", image);
+            ImageVulnerabilityMetric imageVulnerabilityMetric = ImageScanMetricsGenerator.generateImageVulnerabilityMetricFromScanResult(image, scanResponse);
+            for(Map.Entry<String, Integer> set : imageVulnerabilityMetric.getNumberOfVulnerabilities().entrySet()) {
+                System.out.println(image + " " + set.getKey() + " " + set.getValue());
+            }
+
+            for(ImageVulnerability imageVulnerability : imageVulnerabilityMetric.getImageVulnerabilities()) {
+                System.out.println(image + " " + imageVulnerability.getSeverity() + " " + imageVulnerability.getVulnerability() + " " + imageVulnerability.getUrl() + " " + imageVulnerability.getVulnerabilityPackage());
+            }
+        }
     }
 
     @Override

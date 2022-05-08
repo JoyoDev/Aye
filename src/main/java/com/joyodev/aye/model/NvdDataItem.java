@@ -1,8 +1,11 @@
 package com.joyodev.aye.model;
 
-public class NvdDataItem{
+public class NvdDataItem {
+
 	private CvssV3 cvssV3;
+
 	private CvssV2 cvssV2;
+
 	private String id;
 
 	public CvssV3 getCvssV3(){

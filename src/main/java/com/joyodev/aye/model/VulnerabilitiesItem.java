@@ -1,23 +1,42 @@
 package com.joyodev.aye.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
-public class VulnerabilitiesItem{
+public class VulnerabilitiesItem {
+
 	private String severity;
+
 	private List<NvdDataItem> nvdData;
+
 	private String jsonMemberPackage;
+
 	private String packagePath;
+
 	private String packageCpe23;
+
 	private List<Object> vendorData;
+
 	private String packageType;
+
 	private String packageCpe;
+
 	private String url;
+
 	private boolean willNotFix;
+
 	private String feed;
+
 	private String packageVersion;
+
 	private String fix;
+
 	private String vuln;
+
 	private String feedGroup;
+
+	@SerializedName("package_name")
 	private String packageName;
 
 	public String getSeverity(){

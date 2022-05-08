@@ -2,9 +2,12 @@ package com.joyodev.aye.model;
 
 import java.util.List;
 
-public class ScanResponse{
+public class ScanResponse {
+
 	private String vulnerabilityType;
+
 	private List<VulnerabilitiesItem> vulnerabilities;
+
 	private String imageDigest;
 
 	public String getVulnerabilityType(){
@@ -21,11 +24,11 @@ public class ScanResponse{
 
 	@Override
  	public String toString(){
-		return 
-			"Response{" + 
-			"vulnerability_type = '" + vulnerabilityType + '\'' + 
-			",vulnerabilities = '" + vulnerabilities + '\'' + 
-			",imageDigest = '" + imageDigest + '\'' + 
+		return
+			"Response{" +
+			"vulnerability_type = '" + vulnerabilityType + '\'' +
+			",vulnerabilities = '" + vulnerabilities + '\'' +
+			",imageDigest = '" + imageDigest + '\'' +
 			"}";
 		}
 }

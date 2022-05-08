@@ -21,9 +21,9 @@ public class ClusterImageOperator implements Operator {
 
     private List<String> previousImages;
 
-    private Map<String, LocalDateTime> failedAnalysisTime;
+    private final Map<String, LocalDateTime> failedAnalysisTime;
 
-    private CLIRunner cliRunner;
+    private final CLIRunner cliRunner;
 
     public ClusterImageOperator() {
         this.currentImages = new ArrayList<>();

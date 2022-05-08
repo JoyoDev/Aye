@@ -10,7 +10,7 @@ import java.util.Map;
 public class ImageScanMetricsGenerator {
 
     // Generates ImageVulnerabilityResult from Anchore's' scan response/results
-    private static ImageVulnerabilityResult generateImageVulnerability(String image, ScanResponse scanResponse) {
+    public static ImageVulnerabilityResult generateImageVulnerability(String image, ScanResponse scanResponse) {
         List<ImageVulnerability> vulnerabilities = new ArrayList<>();
         for(VulnerabilitiesItem vulnerabilitiesItem : scanResponse.getVulnerabilities()) {
             String vulnerabilityPackage = vulnerabilitiesItem.getPackageName();
@@ -27,7 +27,7 @@ public class ImageScanMetricsGenerator {
     }
 
     // Generates number of vulnerabilities for each severity
-    private static Map<String, Integer> generateNumberOfVulnerabilitiesForSeverities(List<ImageVulnerability> imageVulnerabilities) {
+    public static Map<String, Integer> generateNumberOfVulnerabilitiesForSeverities(List<ImageVulnerability> imageVulnerabilities) {
         Map<String, Integer> result = new HashMap<>();
 
         for(ImageVulnerability imageVulnerability : imageVulnerabilities) {
@@ -38,7 +38,7 @@ public class ImageScanMetricsGenerator {
     }
 
     // Generates metric that will be exposed to Prometheus
-    private static ImageVulnerabilityMetric generateImageVulnerabilityMetric(String image, ImageVulnerabilityResult imageVulnerabilityResult) {
+    public static ImageVulnerabilityMetric generateImageVulnerabilityMetric(String image, ImageVulnerabilityResult imageVulnerabilityResult) {
         return new ImageVulnerabilityMetric(image, imageVulnerabilityResult.getImageVulnerabilities(),
                 generateNumberOfVulnerabilitiesForSeverities(imageVulnerabilityResult.getImageVulnerabilities()));
     }

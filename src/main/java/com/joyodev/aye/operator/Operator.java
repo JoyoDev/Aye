@@ -1,5 +1,7 @@
 package com.joyodev.aye.operator;
 
+import com.joyodev.aye.model.ScanResponse;
+
 import java.util.List;
 
 public interface Operator {
@@ -35,6 +37,13 @@ public interface Operator {
      * @return Evaluation status as String
      */
     String checkImageEvaluationStatus(String image);
+
+    /**
+     * Gets response/results from scanning operation
+     * @param image
+     * @return ScanResponse for provided image
+     */
+    ScanResponse getImageScanResults(String image);
 
     /**
      * Performs image scanning and metric exposing
@@ -105,4 +114,11 @@ public interface Operator {
      * @return true if fail is in the output, else false
      */
     boolean checkIfFailed(String output);
+
+    /**
+     * Checks if scan results are valid
+     * @param output
+     * @return true if scan results contains message about vulnerability type, else false
+     */
+    boolean checkIfScanResponseIsValid(String output);
 }

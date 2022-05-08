@@ -1,5 +1,7 @@
 package com.joyodev.aye.operator;
 
+import com.joyodev.aye.model.ScanResponse;
+import com.joyodev.aye.model.parser.ImageScanParser;
 import com.joyodev.aye.util.TimeCalculator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -100,6 +102,33 @@ public class ClusterImageOperator implements Operator {
     }
 
     @Override
+    public ScanResponse getImageScanResults(String image) {
+        log.debug("Getting scan results for image {}", image);
+        String output = cliRunner.exec("anchore-cli", "--json", "image", "vuln", image, "all");
+        if (output == null) {
+            log.error("Anchore CLI failed to get scan response for image {}", image);
+            return null;
+        }
+        if(checkUnauthorized(output))
+            return null;
+
+        if(checkIfErrorOccurred(output))
+            return null;
+        if(!checkIfScanResponseIsValid(output))
+            return null;
+
+        ScanResponse scanResponse  = ImageScanParser.jsonToScanResponse(output);
+
+        if(scanResponse.getImageDigest() == null) {
+            log.error("Failed to parse scan response for image {}", image);
+            return null;
+        }
+
+        log.debug("Got scan results for image {}", image);
+        return scanResponse;
+    }
+
+    @Override
     public void operate() {
         log.info("Scanning started...");
         for(String image : currentImages) {
@@ -132,6 +161,7 @@ public class ClusterImageOperator implements Operator {
             }
             else {
                 log.debug("Image {} is already analyzed and passed", image);
+                exposeScanResult(image);
             }
         }
         log.info("Analysis loop completed...");
@@ -139,7 +169,12 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public void exposeScanResult(String image) {
-
+        ScanResponse scanResponse = getImageScanResults(image);
+        if(scanResponse == null) {
+            log.error("Could not get scan results for image {} to expose", image);
+        }
+        log.debug("Exposing scan results for image {}", image);
+        System.out.println(scanResponse);
     }
 
     @Override
@@ -193,6 +228,15 @@ public class ClusterImageOperator implements Operator {
     @Override
     public boolean checkIfFailed(String output) {
         return output != null && output.contains("fail");
+    }
+
+    @Override
+    public boolean checkIfScanResponseIsValid(String output) {
+        if(!output.contains("\"vulnerability_type\": \"all\"")) {
+            log.warn("Scan response is not valid. {}", output);
+            return false;
+        }
+        return true;
     }
 
 

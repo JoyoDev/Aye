@@ -1,5 +1,4 @@
 package com.joyodev.aye.activescanner;
-import static org.junit.jupiter.api.Assertions.*;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -9,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ActiveScannerClientTest {
@@ -28,9 +29,7 @@ public class ActiveScannerClientTest {
 
     @Test
     public void cannotCreateClientWithInvalidURL() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            new ActiveScannerClient("some.bad.url/v1/");
-        });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new ActiveScannerClient("some.bad.url/v1/"));
         String expectedMessage = "Provided Anchore Engine URL is not valid: some.bad.url/v1/";
         String actualMessage = exception.getMessage();
 
@@ -49,7 +48,7 @@ public class ActiveScannerClientTest {
         boolean isHealthy = activeScannerClient.checkEngineHealth();
 
         // then
-        assertEquals(isHealthy, false);
+        assertFalse(isHealthy);
     }
 
     @Test
@@ -64,7 +63,7 @@ public class ActiveScannerClientTest {
         boolean isHealthy = activeScannerClient.checkEngineHealth();
 
         // then
-        assertEquals(isHealthy, true);
+        assertTrue(isHealthy);
     }
 
     @AfterEach

@@ -15,8 +15,8 @@ import java.io.IOException;
 @Slf4j
 public class Server {
 
-    @Value("${ANCHORE_ENGINE_URL:http://localhost:8228/v1/}")
-    private String anchoreEngineUrl;
+    @Value("${ANCHORE_CLI_URL:http://localhost:8228/v1/}")
+    private String anchoreCliUrl;
 
     private K8sClient k8sClient;
 
@@ -24,7 +24,7 @@ public class Server {
 
     @PostConstruct
     public void initialize() throws IOException {
-        client = new ActiveScannerClient(anchoreEngineUrl);
+        client = new ActiveScannerClient(anchoreCliUrl);
         k8sClient = K8sClient.getInstance();
     }
 
@@ -36,6 +36,11 @@ public class Server {
         }
         log.warn("Healthcheck failed");
         throw new ServerNotHealthyException();
+    }
+
+    @GetMapping("/aye")
+    public String aye() {
+        return "Welcome to the Aye Server! Happy scanning!";
     }
 
 }

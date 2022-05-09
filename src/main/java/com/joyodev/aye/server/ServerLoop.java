@@ -24,11 +24,8 @@ public class ServerLoop {
 
     @Scheduled(fixedRate = 5000)
     public void loop() {
-        //List<String> clusterImages = k8sClient.getClusterImages();
-        List<String> clusterImages = new ArrayList<>();
-        clusterImages.add("docker.io/library/debian");
-        clusterImages.add("docker.io/library/nginx");
-        clusterImages.add("docker.io/library/tomcat");
+        List<String> clusterImages = k8sClient.getClusterImages();
+
         operator.setCurrentImages(clusterImages);
         operator.operate();
     }

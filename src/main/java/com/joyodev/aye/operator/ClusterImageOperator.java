@@ -231,7 +231,7 @@ public class ClusterImageOperator implements Operator {
                 log.info("Exposing detailed image scan report for image {}", image);
                 List<String> vulns = imageVulnerabilityMetric.getImageVulnerabilities().stream()
                         .map(v -> String.format("Package: %s URL: %s", v.getVulnerabilityPackage(),v.getUrl())).collect(Collectors.toList());
-                Gauge.builder("aye.image.vulnerability.details", imageVulnerabilityMetric, m -> m.getImageVulnerabilities().size())
+                Gauge.builder("aye.image.vulnerability.details", vulns, List::size)
                         .tags(Tags.of(Tag.of("image", image), Tag.of("detailed_vulnerabilities", vulns.toString())))
                         .description("Image scan result in form of: severity - number of vulnerabilities for that severity")
                         .register(meterRegistry);

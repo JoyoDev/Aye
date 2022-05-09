@@ -1,6 +1,5 @@
 package com.joyodev.aye.operator;
 
-import com.joyodev.aye.model.ImageVulnerability;
 import com.joyodev.aye.model.ImageVulnerabilityMetric;
 import com.joyodev.aye.model.ScanResponse;
 import com.joyodev.aye.model.generator.ImageScanMetricsGenerator;
@@ -169,7 +168,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public void operate() {
-        log.info("Scanning started...");
+        log.info("Scanning started");
         for(String image : currentImages) {
             String status = checkImageStatus(image);
             String evalStatus = checkImageEvaluationStatus(image);
@@ -209,7 +208,7 @@ public class ClusterImageOperator implements Operator {
                 exposeScanResult(image);
             }
         }
-        log.info("Analysis loop completed...");
+        log.info("Analysis loop completed");
     }
 
     @Override
@@ -229,6 +228,7 @@ public class ClusterImageOperator implements Operator {
             }
 
             if(detailedMetricsEnabled) {
+                log.info("Exposing detailed image scan report for image {}", image);
                 List<String> vulns = imageVulnerabilityMetric.getImageVulnerabilities().stream()
                         .map(v -> String.format("Package: %s URL: %s", v.getVulnerabilityPackage(),v.getUrl())).collect(Collectors.toList());
                 Gauge.builder("aye.image.vulnerability.details", imageVulnerabilityMetric, m -> m.getImageVulnerabilities().size())

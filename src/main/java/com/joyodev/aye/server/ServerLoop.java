@@ -2,6 +2,8 @@ package com.joyodev.aye.server;
 
 import com.joyodev.aye.operator.ClusterImageOperator;
 import com.joyodev.aye.operator.Operator;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +17,9 @@ public class ServerLoop {
     K8sClient k8sClient;
     Operator operator;
 
-    public ServerLoop() throws IOException {
+    public ServerLoop(MeterRegistry meterRegistry) throws IOException {
         k8sClient  = K8sClient.getInstance();
-        operator = new ClusterImageOperator();
+        operator = new ClusterImageOperator(meterRegistry);
     }
 
     @Scheduled(fixedRate = 5000)

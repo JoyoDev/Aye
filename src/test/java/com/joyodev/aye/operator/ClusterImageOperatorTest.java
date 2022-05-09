@@ -1,9 +1,11 @@
 package com.joyodev.aye.operator;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
@@ -11,9 +13,12 @@ public class ClusterImageOperatorTest {
 
     private Operator operator;
 
+    @Autowired
+    MeterRegistry meterRegistry;
+
     @BeforeEach
     public void setup() {
-        operator = new ClusterImageOperator();
+        operator = new ClusterImageOperator(meterRegistry);
     }
 
     @Test

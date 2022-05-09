@@ -1,12 +1,13 @@
 package com.joyodev.aye.operator;
 
-import com.joyodev.aye.model.ImageVulnerability;
 import com.joyodev.aye.model.ImageVulnerabilityMetric;
 import com.joyodev.aye.model.ScanResponse;
 import com.joyodev.aye.model.generator.ImageScanMetricsGenerator;
 import com.joyodev.aye.model.parser.ImageScanParser;
 import com.joyodev.aye.util.TimeCalculator;
+import io.micrometer.core.instrument.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 @Slf4j
 public class ClusterImageOperator implements Operator {
 
@@ -25,11 +27,38 @@ public class ClusterImageOperator implements Operator {
 
     private final CLIRunner cliRunner;
 
-    public ClusterImageOperator() {
+    // Prometheus metrics
+    private final Counter addedImagesCount;
+
+    private final Counter failedImagesCount;
+
+    private final Counter failedAnalysisCount;
+
+    private MeterRegistry meterRegistry;
+
+
+    public ClusterImageOperator(MeterRegistry meterRegistry) {
         this.currentImages = new ArrayList<>();
         this.previousImages = new ArrayList<>();
         this.failedAnalysisTime = new HashMap<>();
         this.cliRunner = new CLIRunner();
+        this.meterRegistry = meterRegistry;
+
+        addedImagesCount = Counter.builder("aye.added.images")
+                .tag("service", "aye")
+                .description("Number of added images")
+                .register(meterRegistry);
+
+        failedImagesCount = Counter.builder("aye.failed.images")
+                .tag("service", "aye")
+                .description("Number of images that failed scanning")
+                .register(meterRegistry);
+
+        failedAnalysisCount = Counter.builder("aye.failed.analysis")
+                .tag("service", "aye")
+                .description("Number of failed analysis")
+                .register(meterRegistry);
+
     }
 
     @Override
@@ -140,6 +169,8 @@ public class ClusterImageOperator implements Operator {
 
             if(!checkIfAnalyzed(status) && !checkIfAnalyzing(status) || !checkIfPassed(evalStatus)) {
                 if (checkIfFailedAnalysis(status)) {
+                    failedAnalysisCount.increment();
+                    log.warn("Analysis failed for image {}", image);
                     if(!failedAnalysisTime.containsKey(image)) {
                         log.debug("Added image to failed analysis");
                         failedAnalysisTime.put(image, LocalDateTime.now());
@@ -150,6 +181,8 @@ public class ClusterImageOperator implements Operator {
                     }
                 }
                 else if(checkIfFailed(evalStatus)) {
+                    failedImagesCount.increment();
+                    exposeScanResult(image);
                     log.warn("Image {} failed scanning", image);
                 }
                 else {
@@ -159,6 +192,8 @@ public class ClusterImageOperator implements Operator {
                         boolean successAdding = addImage(image);
                         if(!successAdding)
                             log.error("Error adding image {}", image);
+                        else
+                            addedImagesCount.increment();
                     }
                 }
             }
@@ -180,12 +215,16 @@ public class ClusterImageOperator implements Operator {
             log.debug("Exposing scan results for image {}", image);
             ImageVulnerabilityMetric imageVulnerabilityMetric = ImageScanMetricsGenerator.generateImageVulnerabilityMetricFromScanResult(image, scanResponse);
             for(Map.Entry<String, Integer> set : imageVulnerabilityMetric.getNumberOfVulnerabilities().entrySet()) {
-                System.out.println(image + " " + set.getKey() + " " + set.getValue());
+                //System.out.println(image + " " + set.getKey() + " " + set.getValue());
+                Gauge.builder("aye.image.severity.vulnerabilities", set, s -> s.getValue())
+                        .tags(Tags.of(Tag.of("image", image), Tag.of("severity", set.getKey())))
+                        .description("Image scan result in form of: severity - number of vulnerabilities for that severity")
+                        .register(meterRegistry);
             }
 
-            for(ImageVulnerability imageVulnerability : imageVulnerabilityMetric.getImageVulnerabilities()) {
+            /*for(ImageVulnerability imageVulnerability : imageVulnerabilityMetric.getImageVulnerabilities()) {
                 System.out.println(image + " " + imageVulnerability.getSeverity() + " " + imageVulnerability.getVulnerability() + " " + imageVulnerability.getUrl() + " " + imageVulnerability.getVulnerabilityPackage());
-            }
+            } */
         }
     }
 

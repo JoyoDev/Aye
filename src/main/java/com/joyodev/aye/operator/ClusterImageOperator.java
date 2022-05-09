@@ -1,5 +1,6 @@
 package com.joyodev.aye.operator;
 
+import com.joyodev.aye.model.ImageVulnerability;
 import com.joyodev.aye.model.ImageVulnerabilityMetric;
 import com.joyodev.aye.model.ScanResponse;
 import com.joyodev.aye.model.generator.ImageScanMetricsGenerator;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -34,7 +36,10 @@ public class ClusterImageOperator implements Operator {
 
     private final Counter failedAnalysisCount;
 
-    private MeterRegistry meterRegistry;
+    private final MeterRegistry meterRegistry;
+
+    // Enable detailed metrics in expose function
+    private final boolean detailedMetricsEnabled;
 
 
     public ClusterImageOperator(MeterRegistry meterRegistry) {
@@ -43,6 +48,8 @@ public class ClusterImageOperator implements Operator {
         this.failedAnalysisTime = new HashMap<>();
         this.cliRunner = new CLIRunner();
         this.meterRegistry = meterRegistry;
+
+        this.detailedMetricsEnabled = Boolean.parseBoolean(System.getenv("ENABLE_DETAILED_METRICS"));
 
         addedImagesCount = Counter.builder("aye.added.images")
                 .tag("service", "aye")
@@ -215,16 +222,20 @@ public class ClusterImageOperator implements Operator {
             log.debug("Exposing scan results for image {}", image);
             ImageVulnerabilityMetric imageVulnerabilityMetric = ImageScanMetricsGenerator.generateImageVulnerabilityMetricFromScanResult(image, scanResponse);
             for(Map.Entry<String, Integer> set : imageVulnerabilityMetric.getNumberOfVulnerabilities().entrySet()) {
-                //System.out.println(image + " " + set.getKey() + " " + set.getValue());
-                Gauge.builder("aye.image.severity.vulnerabilities", set, s -> s.getValue())
+                Gauge.builder("aye.image.severity.vulnerabilities", set, Map.Entry::getValue)
                         .tags(Tags.of(Tag.of("image", image), Tag.of("severity", set.getKey())))
                         .description("Image scan result in form of: severity - number of vulnerabilities for that severity")
                         .register(meterRegistry);
             }
 
-            /*for(ImageVulnerability imageVulnerability : imageVulnerabilityMetric.getImageVulnerabilities()) {
-                System.out.println(image + " " + imageVulnerability.getSeverity() + " " + imageVulnerability.getVulnerability() + " " + imageVulnerability.getUrl() + " " + imageVulnerability.getVulnerabilityPackage());
-            } */
+            if(detailedMetricsEnabled) {
+                List<String> vulns = imageVulnerabilityMetric.getImageVulnerabilities().stream()
+                        .map(v -> String.format("Package: %s URL: %s", v.getVulnerabilityPackage(),v.getUrl())).collect(Collectors.toList());
+                Gauge.builder("aye.image.vulnerability.detailed", imageVulnerabilityMetric, m -> m.getImageVulnerabilities().size())
+                        .tags(Tags.of(Tag.of("image", image), Tag.of("detailed_vulnerabilities", vulns.toString())))
+                        .description("Image scan result in form of: severity - number of vulnerabilities for that severity")
+                        .register(meterRegistry);
+            }
         }
     }
 
@@ -289,6 +300,5 @@ public class ClusterImageOperator implements Operator {
         }
         return true;
     }
-
 
 }

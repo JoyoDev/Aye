@@ -57,12 +57,6 @@ public interface Operator {
     void exposeScanResult(String image);
 
     /**
-     * Deletes old metric that is not needed anymore
-     * @param image Passed image
-     */
-    void deleteScanMetric(String image);
-
-    /**
      * Calls deleteScanMetric for each old image
      */
     void clearOldMetrics();

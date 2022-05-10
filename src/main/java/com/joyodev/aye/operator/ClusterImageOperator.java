@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -168,6 +165,7 @@ public class ClusterImageOperator implements Operator {
 
     @Override
     public void operate() {
+        clearOldMetrics();
         log.info("Scanning started");
         for(String image : currentImages) {
             String status = checkImageStatus(image);
@@ -243,13 +241,17 @@ public class ClusterImageOperator implements Operator {
     }
 
     @Override
-    public void deleteScanMetric(String image) {
-
-    }
-
-    @Override
     public void clearOldMetrics() {
+        previousImages.forEach(prevImage -> {
+            if(!currentImages.contains(prevImage)) {
+                log.info("Removing old metrics for image {}", prevImage);
+                Collection<Gauge> prevImageSeverityVulns = meterRegistry.find("aye.image.severity.vulnerabilities").tag("image", prevImage).gauges();
+                Collection<Gauge> prevImageVulnDetails = meterRegistry.find("aye.image.vulnerability.details").tag("image", prevImage).gauges();
 
+                prevImageSeverityVulns.forEach( m -> meterRegistry.remove(m));
+                prevImageVulnDetails.forEach(d -> meterRegistry.remove(d));
+            }
+        });
     }
 
     @Override

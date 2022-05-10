@@ -344,4 +344,18 @@ public class ClusterImageOperatorTest {
 
         assertFalse(isValidResponse);
     }
+
+    @Test
+    public void testRemoveImageIfAnalyzed() {
+        // given
+        operator.addImageToFailedAnalysis("docker.io/library/tomcat:latest");
+        operator.addImageToFailedAnalysis("docker.io/library/nginx:latest");
+
+        // when
+        operator.removeImageIfAnalyzed("docker.io/library/nginx:latest");
+        operator.removeImageIfAnalyzed("docker.io/library/debian:latest");
+
+        // then
+        assertTrue(operator.getFailedAnalysisTimeSize() == 1);
+    }
 }

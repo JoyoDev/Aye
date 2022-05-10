@@ -115,4 +115,22 @@ public interface Operator {
      * @return true if scan results contains message about vulnerability type, else false
      */
     boolean checkIfScanResponseIsValid(String output);
+
+    /**
+     * Adds image to map of images that failed analysis, analysis will be performed again later on this image
+     * @param image
+     */
+    void addImageToFailedAnalysis(String image);
+
+    /**
+     * Removes image from map of images that failed analysis
+     * @param image
+     */
+    void removeImageIfAnalyzed(String image);
+
+    /**
+     * Returns number of images in map of failed analysis
+     * @return map size
+     */
+    int getFailedAnalysisTimeSize();
 }

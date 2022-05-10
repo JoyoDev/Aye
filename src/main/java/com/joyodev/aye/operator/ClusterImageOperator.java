@@ -177,7 +177,7 @@ public class ClusterImageOperator implements Operator {
                     log.warn("Analysis failed for image {}", image);
                     if(!failedAnalysisTime.containsKey(image)) {
                         log.debug("Added image to failed analysis");
-                        failedAnalysisTime.put(image, LocalDateTime.now());
+                        addImageToFailedAnalysis(image);
                     } else {
                         boolean successAdding = addFailedAnalysisImage(image);
                         if(!successAdding)
@@ -186,8 +186,9 @@ public class ClusterImageOperator implements Operator {
                 }
                 else if(checkIfFailed(evalStatus)) {
                     failedImagesCount.increment();
-                    exposeScanResult(image);
                     log.warn("Image {} failed scanning", image);
+                    exposeScanResult(image);
+                    removeImageIfAnalyzed(image);
                 }
                 else {
                     if(checkIfAnalyzing(status))
@@ -204,6 +205,7 @@ public class ClusterImageOperator implements Operator {
             else {
                 log.debug("Image {} is already analyzed and passed", image);
                 exposeScanResult(image);
+                removeImageIfAnalyzed(image);
             }
         }
         log.info("Analysis loop completed");
@@ -227,7 +229,7 @@ public class ClusterImageOperator implements Operator {
             }
 
             if(detailedMetricsEnabled) {
-                log.info("Exposing detailed image scan report for image {}", image);
+                log.debug("Exposing detailed image scan report for image {}", image);
                 // Expose all of image's vulnerabilities with Package name and URL
                 List<String> vulns = imageVulnerabilityMetric.getImageVulnerabilities().stream()
                         .map(v -> String.format("Package: %s URL: %s", v.getVulnerabilityPackage(),v.getUrl())).collect(Collectors.toList());
@@ -244,7 +246,7 @@ public class ClusterImageOperator implements Operator {
     public void clearOldMetrics() {
         previousImages.forEach(prevImage -> {
             if(!currentImages.contains(prevImage)) {
-                log.info("Removing old metrics for image {}", prevImage);
+                log.debug("Removing old metrics for image {}", prevImage);
                 Collection<Gauge> prevImageSeverityVulns = meterRegistry.find("aye.image.severity.vulnerabilities").tag("image", prevImage).gauges();
                 Collection<Gauge> prevImageVulnDetails = meterRegistry.find("aye.image.vulnerability.details").tag("image", prevImage).gauges();
 
@@ -304,6 +306,24 @@ public class ClusterImageOperator implements Operator {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void addImageToFailedAnalysis(String image) {
+        failedAnalysisTime.put(image, LocalDateTime.now());
+    }
+
+    @Override
+    public void removeImageIfAnalyzed(String image) {
+        if(failedAnalysisTime.containsKey(image)) {
+            log.debug("Removing image {} from failed analysis list", image);
+            failedAnalysisTime.remove(image);
+        }
+    }
+
+    @Override
+    public int getFailedAnalysisTimeSize() {
+        return this.failedAnalysisTime.size();
     }
 
 }

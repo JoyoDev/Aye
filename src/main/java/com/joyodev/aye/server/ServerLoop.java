@@ -12,15 +12,15 @@ import java.util.List;
 @Component
 public class ServerLoop {
 
-    K8sClient k8sClient;
-    Operator operator;
+    private K8sClient k8sClient;
+    private Operator operator;
 
     public ServerLoop(MeterRegistry meterRegistry) throws IOException {
         k8sClient  = K8sClient.getInstance();
         operator = new ClusterImageOperator(meterRegistry);
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedDelayString = "${service.delay.in.milliseconds}")
     public void loop() {
         List<String> clusterImages = k8sClient.getClusterImages();
 

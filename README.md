@@ -1,5 +1,7 @@
 # Aye
 
+<img src="https://github.com/JoyoDev/Aye/raw/master/images/Aye.png" width="100">
+
 ----
 
 Aye is an open source tool for scanning images on Kubernetes cluster. 

@@ -49,11 +49,21 @@ to the previous one.
 
 Examples
 ===========================
-Number of vulnerabilities for each severity found in the image
+Number of vulnerabilities for each severity found in the image (``aye_image_severity_vulnerabilities``):
 
 <img src="https://github.com/JoyoDev/Aye/raw/main/images/metrics1.png">
 
-Detailed vulnerabilities metric for image
+Detailed vulnerabilities metric for image (``aye_image_vulnerability_details``):
 
-<img src="https://github.com/JoyoDev/Aye/raw/main/images/metrics1.png">
+<img src="https://github.com/JoyoDev/Aye/raw/main/images/metrics2.png">
 
+- List of all metrics
+    - ``aye_added_images_total`` (total number of total images added by Aye)
+    - ``aye_failed_images_total`` (total number of images that didn't pass analysis)
+    - ``aye_failed_analysis_total`` (total number of unsuccessful analysis)
+    - ``aye_image_severity_vulnerabilities`` (number of vulnerabilities for each severity in the image)
+    - ``aye_image_vulnerability_details`` (details for all vulnerabilities in the image)
+
+Contact
+===========================
+Please email us via <a href = "mailto: joyo.development@gmail.com">JoyoDev</a>

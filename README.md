@@ -1,4 +1,4 @@
-# Aye
+# Aye ![](https://github.com/JoyoDev/Aye/actions/workflows/ci.yml/badge.svg)
 
 <img src="https://github.com/JoyoDev/Aye/raw/main/images/Aye.png" width="200">
 
@@ -14,7 +14,7 @@ Installation
 Official docker image:
 ``docker pull joyodev/aye``
 
-Configuring Aye 
+Configuring Aye
 ===========================
 
 There are seven environment variables that can be configured.

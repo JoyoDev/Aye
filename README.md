@@ -35,7 +35,7 @@ delay in milliseconds and detailed metrics.
     export ENABLE_DETAILED_METRICS=true
 
 Enabling detailed metrics will result in Aye exposing all vulnerabilities in the image in a form of``Package: package_name URL: vulnerability_url``
-to Prometheus. For ``SERVICE_DELAY_IN_METRICS`` default value is
+to Prometheus. For ``SERVICE_DELAY_IN_MILLISECONDS`` default value is
 5 minutes (300 000 milliseconds) - time between loops.
 
 How Aye works

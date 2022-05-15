@@ -37,7 +37,7 @@ How Aye works
 ===========================
 In each iteration of the loop Aye gets all unique images that are present on the cluster
 (goes over all containers inside all pods) and sends them to the Anchore Engine.
-It checks status and evaluation status for every image and exposes it
+It checks status and evaluation status for every image and exposes certain metrics
 the Prometheus.
 
 If scanning fails for some reason, Aye will wait for 15 minutes
@@ -49,4 +49,11 @@ to the previous one.
 
 Examples
 ===========================
+Number of vulnerabilities for each severity found in the image
+
+<img src="https://github.com/JoyoDev/Aye/raw/main/images/metrics1.png">
+
+Detailed vulnerabilities metric for image
+
+<img src="https://github.com/JoyoDev/Aye/raw/main/images/metrics1.png">
 

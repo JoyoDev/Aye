@@ -62,7 +62,9 @@ Detailed vulnerabilities metric for image (``aye_image_vulnerability_details``):
     - ``aye_failed_images_total`` (total number of images that didn't pass analysis)
     - ``aye_failed_analysis_total`` (total number of unsuccessful analysis)
     - ``aye_image_severity_vulnerabilities`` (number of vulnerabilities for each severity in the image)
-    - ``aye_image_vulnerability_details`` (details for all vulnerabilities in the image)
+    - ``aye_image_vulnerability_details`` (details for all vulnerabilities in the image) - optional, enabled by setting ``ENABLE_DETAILED_METRICS`` to ``true``.
+
+Prometheus metrics are exposed at ``/actuator/prometheus``.
 
 Contact
 ===========================

@@ -14,7 +14,7 @@ Installation
 Official docker image:
 ``docker pull joyodev/aye``
 
-Configuring Aye
+Configuring Aye 
 ===========================
 
 There are seven environment variables that can be configured.

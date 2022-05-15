@@ -1,6 +1,6 @@
 # Aye
 
-<img src="https://github.com/JoyoDev/Aye/raw/master/images/Aye.png" width="100">
+<img src="https://github.com/JoyoDev/Aye/raw/main/images/Aye.png" width="100">
 
 ----
 

@@ -11,17 +11,31 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 1.11
-          uses: actions/setup-java@v1
-          with:
-            java-version: 1.11
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-      - name: Test with Maven
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.2.0
+      - name: Set up JDK 14
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.14
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run tests with Maven
         run: mvn -B test --file pom.xml
-
-
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: joyodev/aye
+          tags: 1
+          registry: docker.io
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 

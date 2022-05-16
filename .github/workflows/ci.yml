@@ -17,10 +17,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.2.0
-      - name: Set up JDK 14
+      - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
-          java-version: 1.14
+          java-version: 1.11
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
@@ -35,7 +35,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v5
         with:
           image: joyodev/aye
-          tags: 1
+          tags: 0.0.1
           registry: docker.io
           dockerfile: Dockerfile
           username: ${{ secrets.DOCKER_HUB_USERNAME }}

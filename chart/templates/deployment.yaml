@@ -67,7 +67,7 @@ spec:
           - configMapRef:
               name: {{ template "fullname" . }}-env
           - secretRef:
-              name: {{ template "fullname" . }}-pos-secret
+              name: {{ template "fullname" . }}-secret
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

@@ -1,6 +1,6 @@
 general:
-  component: joyo-dev
-  serviceImplementation: Aye
+  component: joyodev
+  serviceImplementation: aye
   updateStrategy: RollingUpdate
   numberOfReplicas: 1
   containerPort: &containerPort 8080

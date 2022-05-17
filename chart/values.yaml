@@ -26,17 +26,13 @@ image:
   tag: 0.0.1
   pullPolicy: IfNotPresent
 
-resources:
-  limits:
-    memory: 128Mi
-  requests:
-    cpu: 50m
-    memory: 64Mi
-
 ApplicationVars:
   SERVER_PORT: "8080"
   LOGGING_LEVEL_ROOT: "INFO"
   SERVICE_DELAY_IN_MILLISECONDS: 300000 # 5 minutes
-  ANCHORE_CLI_URL: "http://security-anchore-engine-api:8228/v1/" # your endpoint
+  ANCHORE_CLI_URL: "http://scanning-anchore-engine-api:8228/v1/" # your endpoint
   ANCHORE_CLI_USER: "admin"
+  ENABLE_DETAILED_METRICS: "true"
+
+ApplicationSecretVars:
   ANCHORE_CLI_PASS: "foobar"

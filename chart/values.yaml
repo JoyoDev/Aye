@@ -1,0 +1,42 @@
+general:
+  component: joyo-dev
+  serviceImplementation: Aye
+  updateStrategy: RollingUpdate
+  numberOfReplicas: 1
+  containerPort: &containerPort 8080
+  timeServiceIsAvailable: 1
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: *containerPort
+      scheme: HTTP
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: *containerPort
+      scheme: HTTP
+
+securityContext:
+  runAsUser: 900
+  runAsGroup: 900
+
+image:
+  repo: docker.io/library
+  name: joyodev/aye
+  tag: 0.0.1
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+ApplicationVars:
+  SERVER_PORT: "8080"
+  LOGGING_LEVEL_ROOT: "INFO"
+  SERVICE_DELAY_IN_MILLISECONDS: 300000 # 5 minutes
+  ANCHORE_CLI_URL: "http://localhost:8228/v1/"
+  ANCHORE_CLI_USER: "admin"
+  ANCHORE_CLI_PASS: "foobar"

@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-v1
+  labels:
+    application: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.general.numberOfReplicas }}
+  strategy:
+    type: {{ .Values.general.updateStrategy }}
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  minReadySeconds: {{ .Values.general.timeServiceIsAvailable }}
+  selector:
+    matchLabels:
+      application: {{ template "fullname" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        application: {{ template "fullname" . }}
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+      annotations:
+        prometheus.io/scrape: "false"
+        prometheus.io/microservice: "{{ template "hname" . }}"
+        prometheus.io/port: "{{ .Values.general.containerPort }}"
+        checksum/env-cm: {{ include (printf "%s/env-configmap.yaml" $.Template.BasePath) . | sha256sum }}
+        checksum/file-cm: {{ include (printf "%s/file-configmap.yaml" $.Template.BasePath) . | sha256sum }}
+    spec:
+      serviceAccountName: {{ template "fullname" . }}
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        fsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsGroup: {{ .Values.securityContext.runAsGroup }}
+        runAsNonRoot: true
+      priorityClassName: {{ .Values.general.priorityClassName }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ template "imagespec" .Values.image }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          livenessProbe:
+{{ toYaml .Values.general.livenessProbe | indent 12 }}
+            initialDelaySeconds: {{ .Values.general.timeServiceIsAvailable }}
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+{{ toYaml .Values.general.readinessProbe | indent 12 }}
+            initialDelaySeconds: {{ .Values.general.timeServiceIsAvailable }}
+            periodSeconds: 20
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 10
+          envFrom:
+          - configMapRef:
+              name: {{ template "fullname" . }}-env
+          - secretRef:
+              name: {{ template "fullname" . }}-pos-secret
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "fullname" . }}
+              topologyKey: "kubernetes.io/hostname"

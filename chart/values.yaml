@@ -21,7 +21,7 @@ securityContext:
   runAsGroup: 900
 
 image:
-  repo: docker.io/library
+  repo: docker.io
   name: joyodev/aye
   tag: 0.0.1
   pullPolicy: IfNotPresent
@@ -37,6 +37,6 @@ ApplicationVars:
   SERVER_PORT: "8080"
   LOGGING_LEVEL_ROOT: "INFO"
   SERVICE_DELAY_IN_MILLISECONDS: 300000 # 5 minutes
-  ANCHORE_CLI_URL: "http://localhost:8228/v1/"
+  ANCHORE_CLI_URL: "http://my-anchore-anchore-engine-api:8228/v1/"
   ANCHORE_CLI_USER: "admin"
   ANCHORE_CLI_PASS: "foobar"

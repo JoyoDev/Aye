@@ -14,6 +14,8 @@ Installation
 Official docker image:
 ``docker pull joyodev/aye``
 
+Customizable Helm chart available at: https://github.com/JoyoDev/JoyoDev-Helm-Charts/tree/main/aye
+
 Configuring Aye
 ===========================
 

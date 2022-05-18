@@ -72,7 +72,7 @@ public interface Operator {
      * @param output
      * @return true if error_codes exists in output, else false
      */
-    boolean checkIfErrorOccurred(String output);
+    boolean checkIfErrorOccurred(String output, String image);
 
     /**
      * Checks if image is analyzed by Anchore Engine

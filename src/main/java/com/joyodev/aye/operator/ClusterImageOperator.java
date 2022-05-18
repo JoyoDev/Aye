@@ -79,7 +79,7 @@ public class ClusterImageOperator implements Operator {
         }
         if(checkUnauthorized(output))
             return false;
-        if (checkIfErrorOccurred(output))
+        if (checkIfErrorOccurred(output, image))
             return false;
 
         log.debug("Image {} added to the Anchore", image);
@@ -112,7 +112,7 @@ public class ClusterImageOperator implements Operator {
         }
         if(checkUnauthorized(output))
             return null;
-        if (checkIfErrorOccurred(output))
+        if (checkIfErrorOccurred(output, image))
             return null;
 
         log.debug("Got status for image {}", image);
@@ -129,7 +129,7 @@ public class ClusterImageOperator implements Operator {
         if(checkUnauthorized(output))
             return null;
 
-        if (checkIfErrorOccurred(output))
+        if (checkIfErrorOccurred(output, image))
             return null;
 
         log.debug("Got evaluation status for image {}", image);
@@ -147,7 +147,7 @@ public class ClusterImageOperator implements Operator {
         if(checkUnauthorized(output))
             return null;
 
-        if(checkIfErrorOccurred(output))
+        if(checkIfErrorOccurred(output, image))
             return null;
         if(!checkIfScanResponseIsValid(output))
             return null;
@@ -266,9 +266,9 @@ public class ClusterImageOperator implements Operator {
     }
 
     @Override
-    public boolean checkIfErrorOccurred(String output) {
+    public boolean checkIfErrorOccurred(String output , String image) {
         if(output.contains("error_codes") || output.contains("Error")) {
-            log.warn("{}", output);
+            log.debug("{} for image {}", output, image);
             return true;
         }
         return false;

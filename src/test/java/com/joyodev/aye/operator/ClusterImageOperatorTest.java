@@ -249,7 +249,7 @@ public class ClusterImageOperatorTest {
                 "Detail: {}\n";
 
         // when
-        boolean errorOccurred = operator.checkIfErrorOccurred(output);
+        boolean errorOccurred = operator.checkIfErrorOccurred(output, "test.io/library/test:latest");
 
         // then
         assertTrue(errorOccurred);
@@ -263,7 +263,7 @@ public class ClusterImageOperatorTest {
                 "Detail: {'error_codes': []}\n";
 
         // when
-        boolean errorOccurred = operator.checkIfErrorOccurred(output);
+        boolean errorOccurred = operator.checkIfErrorOccurred(output, "test.io/library/test:latest");
 
         // then
         assertTrue(errorOccurred);
@@ -279,7 +279,7 @@ public class ClusterImageOperatorTest {
                 "Policy ID: 2c53a13c-1765-11e8-82ef-23527761d060\n";
 
         // when
-        boolean errorOccurred = operator.checkIfErrorOccurred(output);
+        boolean errorOccurred = operator.checkIfErrorOccurred(output, "test.io/library/test:latest");
 
         // then
         assertFalse(errorOccurred);

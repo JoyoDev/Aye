@@ -57,7 +57,7 @@ public final class K8sClient {
             AppsV1Api api = new AppsV1Api(apiClient);
             V1DaemonSetList daemonSetList = api.listNamespacedDaemonSet("default",null, null, null,
                     null, null, null, null, null, 10, false);
-            log.info(String.format("DaemonSets in default namespace: %s", daemonSetList.toString()));
+            log.debug(String.format("DaemonSets in default namespace: %s", daemonSetList.toString()));
             return true;
         } catch (ApiException e) {
             log.error("Could not list DaemonSets", e);
